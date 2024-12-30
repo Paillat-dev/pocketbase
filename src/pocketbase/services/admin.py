@@ -37,7 +37,7 @@ class AdminService(CrudService[AdminModel]):
 
 
 class AdminAuthService(Service):
-    __base_sub_path__ = "/api/admins"
+    __base_sub_path__ = "/api/collections/_superusers"
 
     async def with_password(self, email: str, password: str, options: CommonOptions | None = None) -> AdminAuthResult:
         send_options: SendOptions = {"method": "POST", "body": {"identity": email, "password": password}}
@@ -46,7 +46,7 @@ class AdminAuthService(Service):
             send_options.update(options)
 
         result: AdminAuthResult = await self._send("/auth-with-password", send_options)  # type: ignore
-        self._in.auth.set_admin(result["admin"], token=result["token"])
+        self._in.auth.set_admin(result["record"], token=result["token"])
         return result
 
     async def refresh(self, options: CommonOptions | None = None) -> AdminAuthResult:
